@@ -169,6 +169,7 @@ func main() {
 			page = strings.Replace(page, "{{TITLE}}", SiteTitle, 1)
 			page = strings.Replace(page, "{{NAV}}", navbuf.String(), 1)
 			page = strings.Replace(page, "{{CONTENT}}", html, 1)
+			page = strings.Replace(page, "{{FOOTER}}", FooterText, 1)
 
 			outpath = strings.TrimSuffix(outpath, ".md") + ".html"
 			return os.WriteFile(outpath, []byte(page), 0644)
