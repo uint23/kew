@@ -79,21 +79,6 @@ func copy_file(src string, dst string) error {
 	return err
 }
 
-func fix_md_references(s string) string {
-	r := strings.NewReplacer(
-		/* common cases */
-		".md)", ".html)",
-		".md\"", ".html\"",
-		".md'", ".html'",
-		".md)", ".html)",
-		".md#", ".html#",
-		".md>", ".html>",
-		".md ", ".html ",
-		".md,", ".html,",
-	)
-	return r.Replace(s)
-}
-
 func markdown_to_html(path string) (string, error) {
 	cmd := exec.Command("lowdown", "-Thtml")
 
@@ -155,6 +140,21 @@ func render_nav(n NavNode, b *strings.Builder, cur string) {
 	b.WriteString("</ul>\n")
 }
 
+func replace_md_references(s string) string {
+	r := strings.NewReplacer(
+		/* common cases */
+		".md)", ".html)",
+		".md\"", ".html\"",
+		".md'", ".html'",
+		".md)", ".html)",
+		".md#", ".html#",
+		".md>", ".html>",
+		".md ", ".html ",
+		".md,", ".html,",
+	)
+	return r.Replace(s)
+}
+
 func title_from_name(name string) string {
 	name = strings.TrimSuffix(name, ".md")
 	name = strings.ReplaceAll(name, "-", " ")
@@ -198,7 +198,7 @@ func main() {
 			if err != nil {
 				return err
 			}
-			html = fix_md_references(html)
+			html = replace_md_references(html)
 
 			relhtml := strings.TrimSuffix(rel, ".md") + ".html"
 			cur := relhtml
