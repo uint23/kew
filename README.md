@@ -1,4 +1,5 @@
-### _kew_ - K, Enough of Werc
+![img](logo.png)
+### - K, Enough of Werc
 
 _kew_ is an extremely minimal static site generator written in go inspired by the legendary _werc_ by Uriel @ cat-v.  
 it uses `lowdown`.
