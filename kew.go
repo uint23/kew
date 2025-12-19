@@ -25,12 +25,6 @@ type NavNode struct {
 	Children []NavNode
 }
 
-func title_from_name(name string) string {
-	name = strings.TrimSuffix(name, ".md")
-	name = strings.ReplaceAll(name, "-", " ")
-	return name
-}
-
 func build_nav(dir string, root string) (NavNode, bool) {
 	var node NavNode
 	node.Name = title_from_name(filepath.Base(dir))
@@ -77,6 +71,45 @@ func build_nav(dir string, root string) (NavNode, bool) {
 	return node, true
 }
 
+func copy_file(src string, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, in)
+	return err
+}
+
+func markdown_to_html(path string) (string, error) {
+	cmd := exec.Command("lowdown", "-Thtml")
+
+	in, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer in.Close()
+
+	var out strings.Builder
+	cmd.Stdin = in
+	cmd.Stdout = &out
+	cmd.Stderr = os.Stderr
+
+	err = cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	return out.String(), nil
+}
+
 func render_nav(n NavNode, b *strings.Builder, cur string) {
 	b.WriteString("<ul>\n")
 
@@ -116,43 +149,10 @@ func render_nav(n NavNode, b *strings.Builder, cur string) {
 	b.WriteString("</ul>\n")
 }
 
-func markdown_to_html(path string) (string, error) {
-	cmd := exec.Command("lowdown", "-Thtml")
-
-	in, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer in.Close()
-
-	var out strings.Builder
-	cmd.Stdin = in
-	cmd.Stdout = &out
-	cmd.Stderr = os.Stderr
-
-	err = cmd.Run()
-	if err != nil {
-		return "", err
-	}
-
-	return out.String(), nil
-}
-
-func copy_file(src string, dst string) error {
-	in, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, in)
-	return err
+func title_from_name(name string) string {
+	name = strings.TrimSuffix(name, ".md")
+	name = strings.ReplaceAll(name, "-", " ")
+	return name
 }
 
 func main() {
