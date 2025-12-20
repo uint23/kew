@@ -31,11 +31,6 @@ func build_nav(dir string, root string) (NavNode, bool) {
 		if e.IsDir() {
 			child, ok := build_nav(full, root)
 			if ok {
-				_, err := os.Stat(filepath.Join(full, "index.md"))
-				if err == nil {
-					rel_dir, _ := filepath.Rel(root, full)
-					child.Path = rel_dir + "/index.html"
-				}
 				node.Children = append(node.Children, child)
 			}
 			continue
@@ -43,6 +38,12 @@ func build_nav(dir string, root string) (NavNode, bool) {
 
 		if strings.HasSuffix(e.Name(), ".md") {
 			if e.Name() == "index.md" {
+				rel_dir, _ := filepath.Rel(root, dir)
+				if rel_dir == "." {
+					node.Path = "index.html"
+				} else {
+					node.Path = rel_dir + "/index.html"
+				}
 				continue
 			}
 			rel, _ := filepath.Rel(root, full)
@@ -55,7 +56,7 @@ func build_nav(dir string, root string) (NavNode, bool) {
 		}
 	}
 
-	if len(node.Files) == 0 && len(node.Children) == 0 {
+	if len(node.Files) == 0 && len(node.Children) == 0 && node.Path == "" {
 		return node, false
 	}
 
