@@ -106,16 +106,11 @@ func render_nav(n NavNode, b *strings.Builder, cur string) {
 	b.WriteString("<ul>\n")
 
 	for _, f := range n.Files {
-		p := f.Path
-		if !strings.HasPrefix(p, "/") {
-			p = "/" + p
-		}
-
 		sym := NavFileSymbol
-		if p == cur {
+		if f.Path == cur {
 			sym = NavCurrentSymbol
 		}
-		b.WriteString(`<li><a href="` + p + `">` + sym + f.Name + "</a></li>\n")
+		b.WriteString(`<li><a href="` + f.Path + `">` + sym + f.Name + "</a></li>\n")
 	}
 
 	for _, c := range n.Children {
@@ -125,11 +120,7 @@ func render_nav(n NavNode, b *strings.Builder, cur string) {
 		}
 
 		if c.Path != "" {
-			p := c.Path
-			if !strings.HasPrefix(p, "/") {
-				p = "/" + p
-			}
-			b.WriteString(`<li><a href="` + p + `">` + c.Name + sym + `</a>`)
+			b.WriteString(`<li><a href="` + c.Path + `">` + c.Name + sym + `</a>`)
 		} else {
 			b.WriteString("<li>" + c.Name + sym)
 		}
@@ -203,9 +194,6 @@ func main() {
 
 			relhtml := strings.TrimSuffix(rel, ".md") + ".html"
 			cur := relhtml
-			if !strings.HasPrefix(cur, "/") {
-				cur = "/" + cur
-			}
 			var navbuf strings.Builder
 			render_nav(rootnav, &navbuf, cur)
 
