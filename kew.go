@@ -210,10 +210,10 @@ func main() {
 			render_nav(rootnav, &navbuf, cur)
 
 			page := string(tmpl)
-			page = strings.Replace(page, "{{TITLE}}", SiteTitle, 1)
-			page = strings.Replace(page, "{{NAV}}", navbuf.String(), 1)
-			page = strings.Replace(page, "{{CONTENT}}", html, 1)
-			page = strings.Replace(page, "{{FOOTER}}", FooterText, 1)
+			page = strings.ReplaceAll(page, "{{TITLE}}", SiteTitle)
+			page = strings.ReplaceAll(page, "{{NAV}}", navbuf.String())
+			page = strings.ReplaceAll(page, "{{CONTENT}}", html)
+			page = strings.ReplaceAll(page, "{{FOOTER}}", FooterText)
 
 			outpath = strings.TrimSuffix(outpath, ".md") + ".html"
 			return os.WriteFile(outpath, []byte(page), 0644)
