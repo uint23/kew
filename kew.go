@@ -81,7 +81,12 @@ func copy_file(src string, dst string) error {
 }
 
 func markdown_to_html(path string) (string, error) {
-	cmd := exec.Command("lowdown", "-Thtml")
+	cmd := exec.Command(
+		"lowdown",
+		"-T", "html",
+		"--html-no-skiphtml",
+		"--html-no-escapehtml",
+	)
 
 	in, err := os.Open(path)
 	if err != nil {
@@ -94,8 +99,7 @@ func markdown_to_html(path string) (string, error) {
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
 
-	err = cmd.Run()
-	if err != nil {
+	if err := cmd.Run(); err != nil {
 		return "", err
 	}
 
